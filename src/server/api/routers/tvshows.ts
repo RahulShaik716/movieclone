@@ -1,28 +1,70 @@
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "../trpc";
-import tmdbScrape from "~/utils/vidsrc.ts";
 
-export const movieRouter = createTRPCRouter({
-  getImdbId: publicProcedure
+export const tvrouter = createTRPCRouter({
+  getTVShows: publicProcedure
     .input(
       z.object({
-        movieId: z.string(),
+        pageNo: z.number(),
       }),
     )
-    .query((input) => {
+    .query(async (input) => {
       //call tmdb api to get movies
       const apiKey = process.env.TMDB_API_KEY;
-      const url = `https://api.themoviedb.org/3/movie/${input.input.movieId}?language=en-US`;
-      const response = fetch(url, {
+      const url = `https://api.themoviedb.org/3/discover/tv?include_adult=true&include_null_first_air_dates=false&language=en-US&page=${input.input.pageNo}&sort_by=popularity.desc`;
+      const response = await fetch(url, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${apiKey}`,
         },
-      }).then((res) => res.json());
-      return response;
+      });
+      const json = await response.json();
+      console.log(json);
+      return json;
     }),
-  searchMovie: publicProcedure
+  // https://api.themoviedb.org/3/tv/{series_id}
+  getTVShowDetails: publicProcedure
+    .input(
+      z.object({
+        series_id: z.string(),
+      }),
+    )
+    .query(async ({ input }) => {
+      const apiKey = process.env.TMDB_API_KEY;
+      const url = `https://api.themoviedb.org/3/tv/${input.series_id}`;
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${apiKey}`,
+        },
+      });
+      const json = await response.json();
+      console.log(json);
+      return json;
+    }),
+  getTVShowExternalIds: publicProcedure
+    .input(
+      z.object({
+        series_id: z.string(),
+      }),
+    )
+    .query(async ({ input }) => {
+      const apiKey = process.env.TMDB_API_KEY;
+      const url = `https://api.themoviedb.org/3/tv/${input.series_id}/external_ids`;
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${apiKey}`,
+        },
+      });
+      const json = await response.json();
+      console.log(json);
+      return json;
+    }),
+  searchTVShow: publicProcedure
     .input(
       z.object({
         query: z.string(),
@@ -31,7 +73,7 @@ export const movieRouter = createTRPCRouter({
     .mutation(async (input) => {
       //call tmdb api to get movies
       const apiKey = process.env.TMDB_API_KEY;
-      const url = `https://api.themoviedb.org/3/search/movie?api_key=${apiKey}&language=en-US&query=${input.input.query}&page=1&include_adult=true`;
+      const url = `https://api.themoviedb.org/3/search/tv?api_key=${apiKey}&language=en-US&query=${input.input.query}&page=1&include_adult=true`;
       const response = await fetch(url, {
         method: "GET",
         headers: {
@@ -40,59 +82,19 @@ export const movieRouter = createTRPCRouter({
         },
       });
       const json = await response.json();
+      console.log(json);
       return json;
     }),
-  getMovieCast: publicProcedure
+  getAiringTodayShows: publicProcedure
     .input(
       z.object({
-        movieId: z.string(),
-      }),
-    )
-    .mutation(async (input) => {
-      //call tmdb api to get movies
-      const apiKey = process.env.TMDB_API_KEY;
-      const url = `https://api.themoviedb.org/3/movie/${input.input.movieId}/credits?api_key=${apiKey}&language=en-US`;
-      const response = await fetch(url, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${apiKey}`,
-        },
-      });
-      const json = await response.json();
-      return json;
-    }),
-  getSimilarMovies: publicProcedure
-    .input(
-      z.object({
-        movieId: z.string(),
+        pageNo: z.number(),
       }),
     )
     .query(async (input) => {
       //call tmdb api to get movies
       const apiKey = process.env.TMDB_API_KEY;
-      const url = `https://api.themoviedb.org/3/movie/${input.input.movieId}/recommendations?api_key=${apiKey}&language
-=en-US&page=1`;
-      const response = await fetch(url, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${apiKey}`,
-        },
-      });
-      const json = await response.json();
-      return json;
-    }),
-
-  getNowPlayingMovies: publicProcedure
-    .input(
-      z.object({
-        pageNo: z.string(),
-      }),
-    )
-    .query(async (input) => {
-      const apiKey = process.env.TMDB_API_KEY;
-      const url = `https://api.themoviedb.org/3/movie/now_playing?language=en-US&page=${input.input.pageNo}`;
+      const url = `https://api.themoviedb.org/3/tv/airing_today?api_key=${apiKey}&language=en-US&page=${input.input.pageNo}`;
       const response = await fetch(url, {
         method: "GET",
         headers: {
@@ -104,15 +106,16 @@ export const movieRouter = createTRPCRouter({
       console.log(json);
       return json;
     }),
-  getUpcomingMovies: publicProcedure
+  getOnTheAir: publicProcedure
     .input(
       z.object({
-        pageNo: z.string(),
+        pageNo: z.number(),
       }),
     )
     .query(async (input) => {
+      //call tmdb api to get movies
       const apiKey = process.env.TMDB_API_KEY;
-      const url = `https://api.themoviedb.org/3/movie/upcoming?language=en-US&page=${input.input.pageNo}`;
+      const url = `https://api.themoviedb.org/3/tv/on_the_air?api_key=${apiKey}&language=en-US&page=${input.input.pageNo}`;
       const response = await fetch(url, {
         method: "GET",
         headers: {
@@ -124,15 +127,16 @@ export const movieRouter = createTRPCRouter({
       console.log(json);
       return json;
     }),
-  getPopularMovies: publicProcedure
+  getPopularTVShows: publicProcedure
     .input(
       z.object({
-        pageNo: z.string(),
+        pageNo: z.number(),
       }),
     )
     .query(async (input) => {
+      //call tmdb api to get movies
       const apiKey = process.env.TMDB_API_KEY;
-      const url = `https://api.themoviedb.org/3/movie/popular?language=en-US&page=${input.input.pageNo}`;
+      const url = `https://api.themoviedb.org/3/tv/popular?api_key=${apiKey}&language=en-US&page=${input.input.pageNo}`;
       const response = await fetch(url, {
         method: "GET",
         headers: {
@@ -144,15 +148,16 @@ export const movieRouter = createTRPCRouter({
       console.log(json);
       return json;
     }),
-  getTopRatedMovies: publicProcedure
+  getTopRatedTVShows: publicProcedure
     .input(
       z.object({
-        pageNo: z.string(),
+        pageNo: z.number(),
       }),
     )
     .query(async (input) => {
+      //call tmdb api to get movies
       const apiKey = process.env.TMDB_API_KEY;
-      const url = `https://api.themoviedb.org/3/movie/top_rated?language=en-US&page=${input.input.pageNo}`;
+      const url = `https://api.themoviedb.org/3/tv/top_rated?api_key=${apiKey}&language=en-US&page=${input.input.pageNo}`;
       const response = await fetch(url, {
         method: "GET",
         headers: {
@@ -164,9 +169,9 @@ export const movieRouter = createTRPCRouter({
       console.log(json);
       return json;
     }),
-  getAllGenreIds: publicProcedure.query(async (input) => {
+  getTVShowGenres: publicProcedure.query(async () => {
     const apiKey = process.env.TMDB_API_KEY;
-    const url = `https://api.themoviedb.org/3/genre/movie/list?api_key=${apiKey}&language=en-US`;
+    const url = `https://api.themoviedb.org/3/genre/tv/list?api_key=${apiKey}&language=en-US`;
     const response = await fetch(url, {
       method: "GET",
       headers: {
@@ -178,16 +183,38 @@ export const movieRouter = createTRPCRouter({
     console.log(json);
     return json;
   }),
-  getMoviesByGenre: publicProcedure
+  getTVShowsByGenre: publicProcedure
     .input(
       z.object({
         genreId: z.string(),
-        pageNo: z.string(),
+        pageNo: z.number(),
       }),
     )
     .query(async (input) => {
+      //call tmdb api to get movies
       const apiKey = process.env.TMDB_API_KEY;
-      const url = `https://api.themoviedb.org/3/discover/movie?api_key=${apiKey}&language=en-US&sort_by=popularity.desc&include_adult=false&include_video=false&page=${input.input.pageNo}&with_genres=${input.input.genreId}`;
+      const url = `https://api.themoviedb.org/3/discover/tv?api_key=${apiKey}&language=en-US&sort_by=popularity.desc&include_null_first_air_dates=false&page=${input.input.pageNo}&with_genres=${input.input.genreId}`;
+      const response = await fetch(url, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${apiKey}`,
+        },
+      });
+      const json = await response.json();
+
+      console.log(json);
+      return json;
+    }),
+  getTVShowCredits: publicProcedure
+    .input(
+      z.object({
+        series_id: z.string(),
+      }),
+    )
+    .query(async ({ input }) => {
+      const apiKey = process.env.TMDB_API_KEY;
+      const url = `https://api.themoviedb.org/3/tv/${input.series_id}/aggregate_credits`;
       const response = await fetch(url, {
         method: "GET",
         headers: {
@@ -197,31 +224,19 @@ export const movieRouter = createTRPCRouter({
       });
       const json = await response.json();
       console.log(json);
+
       return json;
     }),
-  getTrendingMovies: publicProcedure.query(async () => {
-    const apiKey = process.env.TMDB_API_KEY;
-    const url = `https://api.themoviedb.org/3/trending/movie/day?api_key=${apiKey}`;
-    const response = await fetch(url, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
-      },
-    });
-    const json = await response.json();
-    console.log(json);
-    return json;
-  }),
-  getMovieTrailers: publicProcedure
+  getSeasonDetails: publicProcedure
     .input(
       z.object({
-        movieId: z.string(),
+        series_id: z.string(),
+        season_number: z.string(),
       }),
     )
     .query(async (input) => {
       const apiKey = process.env.TMDB_API_KEY;
-      const url = `https://api.themoviedb.org/3/movie/${input.input.movieId}/videos?api_key=${apiKey}&language=en-US`;
+      const url = `https://api.themoviedb.org/3/tv/${input.input.series_id}/season/${input.input.season_number}?api_key=${apiKey}&language=en-US`;
       const response = await fetch(url, {
         method: "GET",
         headers: {
@@ -230,22 +245,6 @@ export const movieRouter = createTRPCRouter({
         },
       });
       const json = await response.json();
-      const video = json.results
-        .filter(
-          (video: any) => video.type === "Trailer" && video.site === "YouTube",
-        )
-        .sort((a: any, b: any) => {
-          return b.published_at - a.published_at;
-        });
-      return video[0];
-    }),
-  getVidsrcLinks: publicProcedure
-    .input(
-      z.object({
-        movieId: z.string(),
-      }),
-    )
-    .query(async (input) => {
-      const response = await tmdbScrape(input.input.movieId, "movie");
+      return json;
     }),
 });
