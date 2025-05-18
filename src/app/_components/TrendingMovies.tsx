@@ -34,7 +34,7 @@ export default function TrendingMovies() {
     }
   };
 
-  if (isLoadingMovies) {
+  if (isLoadingMovies || !movies) {
     return <div className="mb-10 h-80 p-4">Loading...</div>;
   }
 

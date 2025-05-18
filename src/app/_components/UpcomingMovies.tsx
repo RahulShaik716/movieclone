@@ -28,7 +28,7 @@ export default function UpcomingMovies() {
     }
   };
 
-  if (UpcomingMoviesLoading) {
+  if (UpcomingMoviesLoading || !UpcomingMovies) {
     return (
       <div className="mb-10 h-80 p-4">
         <h1 className="mb-2 px-10 text-2xl font-bold text-white">

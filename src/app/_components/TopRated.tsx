@@ -23,7 +23,7 @@ export default function TopRated() {
       topRatedScroll.current.scrollBy({ left: -500, behavior: "smooth" });
     }
   };
-  if (topRatedLoading) {
+  if (topRatedLoading || !topRatedMovies) {
     return (
       <div className="mb-10 h-80 p-4">
         <h1 className="mb-2 px-10 text-2xl font-bold text-white">
