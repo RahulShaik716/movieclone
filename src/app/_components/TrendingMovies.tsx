@@ -9,6 +9,14 @@ export default function TrendingMovies() {
   const { data: movies, isLoading: isLoadingMovies } =
     api.movie.getTrendingMovies.useQuery();
   const [currentIndex, setCurrentIndex] = useState(0);
+  // Automatically change the index every second
+  useEffect(() => {
+    const interval = setInterval(() => {
+      handleNext();
+    }, 10000); // Change slide every 20 second
+
+    return () => clearInterval(interval); // Cleanup interval on component unmount
+  }, [currentIndex]);
 
   const handleNext = () => {
     if (movies && currentIndex < movies.results.length - 1) {
@@ -25,15 +33,6 @@ export default function TrendingMovies() {
       setCurrentIndex(movies.results.length - 1); // Go to the last slide
     }
   };
-
-  // Automatically change the index every second
-  useEffect(() => {
-    const interval = setInterval(() => {
-      handleNext();
-    }, 10000); // Change slide every 20 second
-
-    return () => clearInterval(interval); // Cleanup interval on component unmount
-  }, [currentIndex, movies, handleNext]);
 
   if (isLoadingMovies) {
     return <div className="mb-10 h-80 p-4">Loading...</div>;
