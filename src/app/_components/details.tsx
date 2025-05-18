@@ -5,155 +5,39 @@ import { useEffect, useRef, useState } from "react";
 import Button from "./Button";
 import { api } from "~/trpc/react";
 import SimilarMovies from "./SimilarMovies";
-import MoviePlayer from "./MoviePlayer";
 import ScrollButton from "./ScrollButton";
 import ChevronLeft from "public/ChevronLeft";
 import ChevronRight from "public/ChevronRight";
-import ReactPlayer from "react-player";
-import Sound from "public/Sound";
+
 import type {
+  MovieCastMember,
   MovieDetailsSchema,
   MovieGenre,
+  ProductionCompany,
 } from "~/server/schema/movie.schema";
 
 import { useRouter } from "next/navigation";
-// {
-//   "adult": false,
-//   "backdrop_path": "/2Nti3gYAX513wvhp8IiLL6ZDyOm.jpg",
-//   "belongs_to_collection": {
-//       "id": 1461530,
-//       "name": "The Minecraft Movie Collection",
-//       "poster_path": "/8jMQ2sVZ1RRiYSpcb7Yommo7V4r.jpg",
-//       "backdrop_path": "/48TbIdb60bjLvVhj6W71YNvDM2p.jpg"
-//   },
-//   "budget": 150000000,
-//   "genres": [
-//       {
-//           "id": 10751,
-//           "name": "Family"
-//       },
-//       {
-//           "id": 35,
-//           "name": "Comedy"
-//       },
-//       {
-//           "id": 12,
-//           "name": "Adventure"
-//       },
-//       {
-//           "id": 14,
-//           "name": "Fantasy"
-//       }
-//   ],
-//   "homepage": "https://www.minecraft-movie.com",
-//   "id": 950387,
-//   "imdb_id": "tt3566834",
-//   "origin_country": [
-//       "US"
-//   ],
-//   "original_language": "en",
-//   "original_title": "A Minecraft Movie",
-//   "overview": "Four misfits find themselves struggling with ordinary problems when they are suddenly pulled through a mysterious portal into the Overworld: a bizarre, cubic wonderland that thrives on imagination. To get back home, they'll have to master this world while embarking on a magical quest with an unexpected, expert crafter, Steve.",
-//   "popularity": 473.4577,
-//   "poster_path": "/iPPTGh2OXuIv6d7cwuoPkw8govp.jpg",
-//   "production_companies": [
-//       {
-//           "id": 174,
-//           "logo_path": "/zhD3hhtKB5qyv7ZeL4uLpNxgMVU.png",
-//           "name": "Warner Bros. Pictures",
-//           "origin_country": "US"
-//       },
-//       {
-//           "id": 923,
-//           "logo_path": "/5UQsZrfbfG2dYJbx8DxfoTr2Bvu.png",
-//           "name": "Legendary Pictures",
-//           "origin_country": "US"
-//       },
-//       {
-//           "id": 110691,
-//           "logo_path": "/i0D9b0veZbValgEFiJjSd0mbb9C.png",
-//           "name": "Mojang Studios",
-//           "origin_country": "SE"
-//       },
-//       {
-//           "id": 829,
-//           "logo_path": "/aXqwCvJSCDbTclkxAYfsT1l4Dsa.png",
-//           "name": "Vertigo Entertainment",
-//           "origin_country": "US"
-//       },
-//       {
-//           "id": 159602,
-//           "logo_path": "/e3KodIPxOSC6xpzgIBISB4COQcu.png",
-//           "name": "On the Roam",
-//           "origin_country": "US"
-//       },
-//       {
-//           "id": 216687,
-//           "logo_path": "/kKVYqekveOvLK1IgqdJojLjQvtu.png",
-//           "name": "Domain Entertainment",
-//           "origin_country": "US"
-//       }
-//   ],
-//   "production_countries": [
-//       {
-//           "iso_3166_1": "SE",
-//           "name": "Sweden"
-//       },
-//       {
-//           "iso_3166_1": "US",
-//           "name": "United States of America"
-//       }
-//   ],
-//   "release_date": "2025-03-31",
-//   "revenue": 717824380,
-//   "runtime": 101,
-//   "spoken_languages": [
-//       {
-//           "english_name": "English",
-//           "iso_639_1": "en",
-//           "name": "English"
-//       }
-//   ],
-//   "status": "Released",
-//   "tagline": "Be there and be square.",
-//   "title": "A Minecraft Movie",
-//   "video": false,
-//   "vote_average": 6.2,
-//   "vote_count": 725
-// }
+
 export default function MovieDetails({ movie }: { movie: MovieDetailsSchema }) {
-  const [play, setPlay] = useState(false);
-  const [movieDetails, setMovieDetails] = useState<
-    MovieDetailsSchema | undefined
-  >();
-  const [cast, setCast] = useState([]);
+  const [cast, setCast] = useState<MovieCastMember[]>([]);
   const castScroll = useRef<HTMLDivElement>(null);
   const router = useRouter();
-  const { data: videoDetails, isLoading: isVideoLoading } =
-    api.movie.getMovieTrailers.useQuery({
-      movieId: movie.id.toString(),
-    });
 
   const { mutate: getCast, isPending: castLoading } =
     api.movie.getMovieCast.useMutation({
       onSuccess: (data) => {
-        console.log(data);
         setCast(data.cast);
       },
       onError: (error) => {
         console.error("Error fetching movie data:", error);
       },
     });
+
+  const { data: movieDetails, isLoading: movieDetailsLoading } =
+    api.movie.getImdbId.useQuery({
+      movieId: movie.id.toString(),
+    });
   useEffect(() => {
-    async function fetchImdbId() {
-      console.log(movie.id);
-      const response = await fetch(`/api/imdb?id=${movie.id}`);
-      const data = await response.json();
-      console.log(data);
-      setMovieDetails(data);
-      setImdb_id(data.imdb_id);
-    }
-    void fetchImdbId();
     getCast({ movieId: movie.id.toString() });
   }, [movie.id]);
 
@@ -193,11 +77,6 @@ export default function MovieDetails({ movie }: { movie: MovieDetailsSchema }) {
                   sessionStorage.setItem(
                     "watch_url",
                     `https://vidsrc.to/embed/movie/${movie.id}`,
-                    // ` https://multiembed.mov/?video_id=${movie.id}&tmdb=1`,
-                    //  `https://getsuperembed.link/?video_id=${movieDetails.imdb_id}`,
-                    // `https://fsapi.xyz/movie/${movieDetails.imdb_id}`,
-                    //  `https://vidsrc.xyz/embed/movie/${movie.id}`,
-                    // `https://vidcloud.io/${movieDetails.imdb_id}.html`,
                   );
                   router.push("/player");
                 }}
@@ -301,31 +180,34 @@ export default function MovieDetails({ movie }: { movie: MovieDetailsSchema }) {
         </h2>
         <div className="search-bar max-w-5xl overflow-x-auto overflow-y-hidden px-2 py-4 whitespace-nowrap">
           <div className="flex justify-center gap-4">
-            {movieDetails.production_companies &&
-              movieDetails.production_companies.map((actor) => (
+            {movieDetails.production_companies.map(
+              (productionCompany: ProductionCompany) => (
                 <div
-                  key={actor.id}
+                  key={productionCompany.id}
                   className="flex max-w-[100px] min-w-[100px] flex-shrink-0 flex-col items-center"
                 >
                   <div className="relative h-24 w-24 shadow-md">
-                    {actor.logo_path ? (
-                      <img
-                        src={`https://image.tmdb.org/t/p/original${actor.logo_path}`}
-                        alt={actor.name}
+                    {productionCompany.logo_path ? (
+                      <Image
+                        width={1000}
+                        height={1000}
+                        src={`https://image.tmdb.org/t/p/original${productionCompany.logo_path}`}
+                        alt={productionCompany.name}
                         className="bg-opacity-50 h-full w-full bg-white object-contain p-2 shadow-md backdrop-blur-lg"
                       />
                     ) : (
                       <div className="flex h-full w-full items-center justify-center bg-white p-2 text-center text-sm text-wrap text-black shadow-md backdrop-blur-md">
-                        {actor.name}
+                        {productionCompany.name}
                       </div>
                     )}
                   </div>
                 </div>
-              ))}
+              ),
+            )}
           </div>
         </div>
       </div>
-      <SimilarMovies movieId={movie.id} />
+      <SimilarMovies movieId={movie.id.toString()} />
       {/* {play && <MoviePlayer imdb={movieDetails.imdb_id} setPlay={setPlay} />} */}
     </div>
   );

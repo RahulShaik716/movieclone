@@ -7,29 +7,16 @@ import { useRouter } from "next/navigation";
 
 export default function TVDetails({ tv }: { tv: TVShowDetails }) {
   const [imdb, setImdb_id] = useState("");
-  const [tvDetails, settvDetails] = useState<TVShowDetails>();
   const [selectedSeason, setSelectedSeason] = useState(0);
   const [selectedEpisode, setSelectedEpisode] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
   const castScroll = useRef<HTMLDivElement>(null);
   const router = useRouter();
-  useEffect(() => {
-    async function fetchImdbId() {
-      const response = await fetch(`/api/getTVShowIMDB?series_id=${tv.id}`);
-      const data = await response.json();
-      setImdb_id(data.imdb_id);
-    }
-    if (imdb == "") void fetchImdbId();
-  }, [selectedEpisode]);
 
-  useEffect(() => {
-    async function fetchImdbId() {
-      const response = await fetch(`/api/tvshowdetails?series_id=${tv.id}`);
-      const data = await response.json();
-      settvDetails(data);
-    }
-    void fetchImdbId();
-  }, [tv.id]);
+  const { data: tvDetails, isLoading: tvDetailsLoading } =
+    api.tvshows.getTVShowDetails.useQuery({
+      series_id: tv.id.toString(),
+    });
   const seasonsPerPage = 5;
   // Automatically switch pages based on the selected season
   useEffect(() => {
@@ -177,7 +164,7 @@ export default function TVDetails({ tv }: { tv: TVShowDetails }) {
             className="search-bar flex justify-start gap-4 overflow-x-auto overflow-y-hidden px-10"
             ref={castScroll}
           >
-            {cast.cast.map((actor) => (
+            {cast?.cast.map((actor) => (
               <div key={actor.id} className="flex flex-col items-center">
                 <div className="h-24 w-24 overflow-hidden rounded-full border-2 border-white shadow-md">
                   {actor.profile_path ? (
@@ -240,15 +227,15 @@ export default function TVDetails({ tv }: { tv: TVShowDetails }) {
       </div>
       {/* Render Seasons */}
       <div className="flex w-full items-center justify-center gap-x-4 py-2">
-        {paginatedSeasons?.map((season) => (
+        {paginatedSeasons?.map((season, index) => (
           <div
-            key={season.season_number}
+            key={index}
             className={`cursor-pointer rounded-xl px-4 py-2 ${
-              selectedSeason === season.season_number
+              selectedSeason === index + 1
                 ? "bg-orange-500 text-white"
                 : "bg-gray-700"
             }`}
-            onClick={() => setSelectedSeason(season.season_number)}
+            onClick={() => setSelectedSeason(index + 1)}
           >
             {season.name}
           </div>
@@ -256,7 +243,7 @@ export default function TVDetails({ tv }: { tv: TVShowDetails }) {
       </div>
 
       <div className="flex flex-col">
-        {seasonDetails.episodes?.map((episode, index) => (
+        {seasonDetails?.episodes?.map((episode, index) => (
           <div className="mb-4 flex flex-row gap-x-4 px-2 py-4" key={index}>
             <Image
               width={1000}
@@ -269,7 +256,7 @@ export default function TVDetails({ tv }: { tv: TVShowDetails }) {
                 setSelectedEpisode(episode.episode_number);
                 sessionStorage.setItem(
                   "watch_url",
-                  `https://vidsrc.to/embed/tv/${imdb}/${tvDetails.seasons[selectedSeason].season_number}/${episode.episode_number}`,
+                  `https://vidsrc.to/embed/tv/${imdb}/${selectedSeason}/${episode.episode_number}`,
                 );
                 router.push(`/player`);
               }}

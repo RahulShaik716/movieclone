@@ -7,6 +7,7 @@ import ChevronRight from "public/ChevronRight";
 import { useRef } from "react";
 import MovieSkeleton from "./MovieSkeleton";
 import HorizantalCard from "./MovieHCard";
+import type { MovieSchema } from "~/server/schema/movie.schema";
 
 export default function NowPlaying() {
   const searchParams = useSearchParams();
@@ -27,7 +28,6 @@ export default function NowPlaying() {
     api.movie.getNowPlayingMovies.useQuery({
       pageNo,
     });
-  console.log(nowPlayingMovies);
   if (nowPlayingLoading) {
     return (
       <div className="mb-10 h-80 p-4">
@@ -47,7 +47,7 @@ export default function NowPlaying() {
         className="search-bar flex w-full cursor-pointer flex-row gap-x-4 overflow-x-auto px-10"
         ref={nowPlaying}
       >
-        {nowPlayingMovies.results.map((movie: any) => (
+        {nowPlayingMovies?.results.map((movie: MovieSchema) => (
           <HorizantalCard movie={movie} key={movie.id} /> // use the HorizantalCard component here
         ))}
         <ScrollButton onClick={scrollToStart} direction="left">

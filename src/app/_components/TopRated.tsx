@@ -5,6 +5,7 @@ import ScrollButton from "./ScrollButton";
 import ChevronLeft from "public/ChevronLeft";
 import ChevronRight from "public/ChevronRight";
 import { api } from "~/trpc/react";
+import type { MovieSchema } from "~/server/schema/movie.schema";
 
 export default function TopRated() {
   const { data: topRatedMovies, isLoading: topRatedLoading } =
@@ -42,7 +43,7 @@ export default function TopRated() {
         className="search-bar flex w-full cursor-pointer flex-row gap-x-4 overflow-x-auto px-10"
         ref={topRatedScroll}
       >
-        {topRatedMovies.results.map((movie: any) => (
+        {topRatedMovies?.results.map((movie: MovieSchema) => (
           <HorizantalCard movie={movie} key={movie.id} /> // use the HorizantalCard component here
         ))}
         <ScrollButton onClick={scrollToStart} direction="left">

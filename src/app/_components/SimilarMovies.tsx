@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import ScrollButton from "./ScrollButton";
 import ChevronLeft from "public/ChevronLeft";
 import ChevronRight from "public/ChevronRight";
+import type { MovieSchema } from "~/server/schema/movie.schema";
 
 export default function SimilarMovies({ movieId }: { movieId: string }) {
   const { data: similarMovies } = api.movie.getSimilarMovies.useQuery({
@@ -34,7 +35,7 @@ export default function SimilarMovies({ movieId }: { movieId: string }) {
           ref={scrollRef}
           className="search-bar flex w-full flex-row gap-x-4 overflow-x-auto"
         >
-          {similarMovies?.results.map((movie: any) => (
+          {similarMovies?.results.map((movie: MovieSchema) => (
             <div
               key={movie.id}
               className="h-fit max-w-sm min-w-fit"
@@ -53,9 +54,7 @@ export default function SimilarMovies({ movieId }: { movieId: string }) {
                   unoptimized
                 />
               ) : (
-                <div className="flex aspect-video h-full w-xs items-center justify-center rounded-lg bg-white px-4 text-xl text-black">
-                  {movie.title}
-                </div>
+                <div className="flex aspect-video h-full w-md items-center justify-center rounded-lg bg-white px-4 text-xl text-black"></div>
               )}
               <div className="text-md flex w-full justify-center rounded px-2 py-1 font-bold text-white">
                 {movie.title}

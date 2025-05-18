@@ -7,6 +7,7 @@ import HorizantalTVCard from "./HorizantalTVCard";
 import ScrollButton from "../ScrollButton";
 import ChevronLeft from "public/ChevronLeft";
 import ChevronRight from "public/ChevronRight";
+import type { TVShow } from "~/server/schema/TV.schema";
 
 export default function OnTheAir() {
   const onTheAirScroll = useRef<HTMLDivElement>(null);
@@ -44,7 +45,7 @@ export default function OnTheAir() {
         className="search-bar flex w-full cursor-pointer flex-row gap-x-4 overflow-x-auto px-10"
         ref={onTheAirScroll}
       >
-        {onTheAirShows.results.map((tvShow: any) => (
+        {onTheAirShows?.results.map((tvShow: TVShow) => (
           <HorizantalTVCard tvShow={tvShow} key={tvShow.id} />
         ))}
         <ScrollButton onClick={scrollToStart} direction="left">

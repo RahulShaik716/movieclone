@@ -1,7 +1,5 @@
 "use client";
 
-import { api } from "~/trpc/react";
-
 export default function PlayerPage() {
   const watchUrl = sessionStorage.getItem("watch_url");
 

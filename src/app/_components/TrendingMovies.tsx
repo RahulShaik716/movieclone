@@ -3,6 +3,7 @@ import { api } from "~/trpc/react";
 import ChevronLeft from "public/ChevronLeft";
 import ChevronRight from "public/ChevronRight";
 import MovieBanner from "./MovieBanner";
+import type { MovieSchema } from "~/server/schema/movie.schema";
 
 export default function TrendingMovies() {
   const { data: movies, isLoading: isLoadingMovies } =
@@ -46,7 +47,7 @@ export default function TrendingMovies() {
           transform: `translateX(-${currentIndex * 100}%)`,
         }}
       >
-        {movies.results.map((movie: any) => (
+        {movies?.results.map((movie: MovieSchema) => (
           <div key={movie.id} className="w-full flex-shrink-0">
             <MovieBanner
               movie={movie}

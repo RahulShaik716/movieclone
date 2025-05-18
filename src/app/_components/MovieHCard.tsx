@@ -29,7 +29,7 @@ export default function HorizantalCard({
         className="aspect-auto h-auto w-full max-w-md rounded-lg object-contain"
         unoptimized
       />
-      <div className="text-md flex w-full justify-center rounded px-2 py-1 font-bold text-orange-500">
+      <div className="text-md flex w-full max-w-md justify-center truncate rounded px-2 py-1 font-bold text-orange-500">
         {movie.title}
       </div>
     </div>

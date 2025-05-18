@@ -7,6 +7,7 @@ import ChevronLeft from "public/ChevronLeft";
 import ChevronRight from "public/ChevronRight";
 import MovieSkeleton from "./MovieSkeleton";
 import HorizantalCard from "./MovieHCard";
+import type { MovieSchema } from "~/server/schema/movie.schema";
 
 export default function UpcomingMovies() {
   const pageNo = 1;
@@ -48,7 +49,7 @@ export default function UpcomingMovies() {
         className="search-bar flex w-full cursor-pointer flex-row gap-x-4 overflow-x-auto px-10"
         ref={UpcomingScroll}
       >
-        {UpcomingMovies.results.map((movie: any) => (
+        {UpcomingMovies?.results.map((movie: MovieSchema) => (
           <HorizantalCard movie={movie} key={movie.id} /> // use the HorizantalCard component here
         ))}
         <ScrollButton onClick={scrollToStart} direction="left">

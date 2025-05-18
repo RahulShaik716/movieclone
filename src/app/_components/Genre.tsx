@@ -5,8 +5,9 @@ import { useRef } from "react";
 import ScrollButton from "./ScrollButton";
 import ChevronLeft from "public/ChevronLeft";
 import ChevronRight from "public/ChevronRight";
+import type { MovieGenre, MovieSchema } from "~/server/schema/movie.schema";
 
-export default function MovieByGenre({ genre }) {
+export default function MovieByGenre({ genre }: { genre: MovieGenre }) {
   const { data: movies, isLoading: isLoadingMovies } =
     api.movie.getMoviesByGenre.useQuery({
       genreId: genre.id.toString(),
@@ -43,7 +44,7 @@ export default function MovieByGenre({ genre }) {
         className="search-bar flex w-full cursor-pointer flex-row gap-x-4 overflow-x-auto px-10"
         ref={scrollRef}
       >
-        {movies.results.map((movie: any) => (
+        {movies?.results.map((movie: MovieSchema) => (
           <HorizantalCard movie={movie} key={movie.id} /> // use the HorizantalCard component here
         ))}
         <ScrollButton onClick={scrollToStart} direction="left">

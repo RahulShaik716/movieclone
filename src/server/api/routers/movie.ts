@@ -1,6 +1,15 @@
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "../trpc";
-import tmdbScrape from "~/utils/vidsrc.ts";
+import type {
+  MovieCast,
+  MovieDetailsSchema,
+  MovieGenreResults,
+  MovieSearchResults,
+  MovieTrailer,
+  MovieTrailerResults,
+  NowPlayingMovies,
+  RecommendationMovies,
+} from "~/server/schema/movie.schema";
 
 export const movieRouter = createTRPCRouter({
   getImdbId: publicProcedure
@@ -9,18 +18,19 @@ export const movieRouter = createTRPCRouter({
         movieId: z.string(),
       }),
     )
-    .query((input) => {
+    .query(async (input) => {
       //call tmdb api to get movies
       const apiKey = process.env.TMDB_API_KEY;
       const url = `https://api.themoviedb.org/3/movie/${input.input.movieId}?language=en-US`;
-      const response = fetch(url, {
+      const response = await fetch(url, {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${apiKey}`,
         },
-      }).then((res) => res.json());
-      return response;
+      });
+      const json = (await response.json()) as MovieDetailsSchema;
+      return json;
     }),
   searchMovie: publicProcedure
     .input(
@@ -39,7 +49,8 @@ export const movieRouter = createTRPCRouter({
           Authorization: `Bearer ${apiKey}`,
         },
       });
-      const json = await response.json();
+      const json = (await response.json()) as MovieSearchResults;
+      // TODO: Replace 'any' with a proper type/interface for the expected response
       return json;
     }),
   getMovieCast: publicProcedure
@@ -59,7 +70,7 @@ export const movieRouter = createTRPCRouter({
           Authorization: `Bearer ${apiKey}`,
         },
       });
-      const json = await response.json();
+      const json = (await response.json()) as MovieCast;
       return json;
     }),
   getSimilarMovies: publicProcedure
@@ -80,7 +91,7 @@ export const movieRouter = createTRPCRouter({
           Authorization: `Bearer ${apiKey}`,
         },
       });
-      const json = await response.json();
+      const json = (await response.json()) as RecommendationMovies;
       return json;
     }),
 
@@ -100,8 +111,7 @@ export const movieRouter = createTRPCRouter({
           Authorization: `Bearer ${apiKey}`,
         },
       });
-      const json = await response.json();
-      console.log(json);
+      const json = (await response.json()) as NowPlayingMovies;
       return json;
     }),
   getUpcomingMovies: publicProcedure
@@ -120,8 +130,7 @@ export const movieRouter = createTRPCRouter({
           Authorization: `Bearer ${apiKey}`,
         },
       });
-      const json = await response.json();
-      console.log(json);
+      const json = (await response.json()) as NowPlayingMovies;
       return json;
     }),
   getPopularMovies: publicProcedure
@@ -140,8 +149,7 @@ export const movieRouter = createTRPCRouter({
           Authorization: `Bearer ${apiKey}`,
         },
       });
-      const json = await response.json();
-      console.log(json);
+      const json = (await response.json()) as RecommendationMovies;
       return json;
     }),
   getTopRatedMovies: publicProcedure
@@ -160,8 +168,7 @@ export const movieRouter = createTRPCRouter({
           Authorization: `Bearer ${apiKey}`,
         },
       });
-      const json = await response.json();
-      console.log(json);
+      const json = (await response.json()) as RecommendationMovies;
       return json;
     }),
   getAllGenreIds: publicProcedure.query(async (input) => {
@@ -174,8 +181,7 @@ export const movieRouter = createTRPCRouter({
         Authorization: `Bearer ${apiKey}`,
       },
     });
-    const json = await response.json();
-    console.log(json);
+    const json = (await response.json()) as MovieGenreResults;
     return json;
   }),
   getMoviesByGenre: publicProcedure
@@ -195,8 +201,7 @@ export const movieRouter = createTRPCRouter({
           Authorization: `Bearer ${apiKey}`,
         },
       });
-      const json = await response.json();
-      console.log(json);
+      const json = (await response.json()) as RecommendationMovies;
       return json;
     }),
   getTrendingMovies: publicProcedure.query(async () => {
@@ -209,8 +214,7 @@ export const movieRouter = createTRPCRouter({
         Authorization: `Bearer ${apiKey}`,
       },
     });
-    const json = await response.json();
-    console.log(json);
+    const json = (await response.json()) as RecommendationMovies;
     return json;
   }),
   getMovieTrailers: publicProcedure
@@ -229,23 +233,15 @@ export const movieRouter = createTRPCRouter({
           Authorization: `Bearer ${apiKey}`,
         },
       });
-      const json = await response.json();
+      const json = (await response.json()) as MovieTrailerResults;
       const video = json.results
         .filter(
-          (video: any) => video.type === "Trailer" && video.site === "YouTube",
+          (video: MovieTrailer) =>
+            video.type === "Trailer" && video.site === "YouTube",
         )
-        .sort((a: any, b: any) => {
-          return b.published_at - a.published_at;
+        .sort((a: MovieTrailer, b: MovieTrailer) => {
+          return +b.published_at - +a.published_at;
         });
       return video[0];
-    }),
-  getVidsrcLinks: publicProcedure
-    .input(
-      z.object({
-        movieId: z.string(),
-      }),
-    )
-    .query(async (input) => {
-      const response = await tmdbScrape(input.input.movieId, "movie");
     }),
 });

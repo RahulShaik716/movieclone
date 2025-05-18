@@ -1,23 +1,9 @@
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import Rating from "./Rating";
+import type { MovieSchema } from "~/server/schema/movie.schema";
 type Props = {
-  movie: {
-    adult: boolean;
-    backdrop_path: string;
-    genre_ids: number[];
-    id: number;
-    original_language: string;
-    original_title?: string;
-    overview: string;
-    popularity: number;
-    poster_path: string;
-    release_date: string;
-    title?: string;
-    video: boolean;
-    vote_average: number;
-    vote_count: number;
-  };
+  movie: MovieSchema;
 };
 export default function MovieCard(prop: Props) {
   const router = useRouter();

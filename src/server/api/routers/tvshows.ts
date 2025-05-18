@@ -1,5 +1,13 @@
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "../trpc";
+import type {
+  Season,
+  TVShowAggregateCredits,
+  TVShowDetails,
+  TVShowExternalIds,
+  TVShowGenresList,
+  TVShowResults,
+} from "~/server/schema/TV.schema";
 
 export const tvrouter = createTRPCRouter({
   getTVShows: publicProcedure
@@ -19,7 +27,7 @@ export const tvrouter = createTRPCRouter({
           Authorization: `Bearer ${apiKey}`,
         },
       });
-      const json = await response.json();
+      const json = (await response.json()) as TVShowResults[];
       console.log(json);
       return json;
     }),
@@ -40,7 +48,7 @@ export const tvrouter = createTRPCRouter({
           Authorization: `Bearer ${apiKey}`,
         },
       });
-      const json = await response.json();
+      const json = (await response.json()) as TVShowDetails;
       console.log(json);
       return json;
     }),
@@ -60,7 +68,7 @@ export const tvrouter = createTRPCRouter({
           Authorization: `Bearer ${apiKey}`,
         },
       });
-      const json = await response.json();
+      const json = (await response.json()) as TVShowExternalIds;
       console.log(json);
       return json;
     }),
@@ -81,7 +89,7 @@ export const tvrouter = createTRPCRouter({
           Authorization: `Bearer ${apiKey}`,
         },
       });
-      const json = await response.json();
+      const json = (await response.json()) as TVShowResults;
       console.log(json);
       return json;
     }),
@@ -102,7 +110,7 @@ export const tvrouter = createTRPCRouter({
           Authorization: `Bearer ${apiKey}`,
         },
       });
-      const json = await response.json();
+      const json = (await response.json()) as TVShowResults;
       console.log(json);
       return json;
     }),
@@ -123,7 +131,7 @@ export const tvrouter = createTRPCRouter({
           Authorization: `Bearer ${apiKey}`,
         },
       });
-      const json = await response.json();
+      const json = (await response.json()) as TVShowResults;
       console.log(json);
       return json;
     }),
@@ -144,7 +152,7 @@ export const tvrouter = createTRPCRouter({
           Authorization: `Bearer ${apiKey}`,
         },
       });
-      const json = await response.json();
+      const json = (await response.json()) as TVShowResults;
       console.log(json);
       return json;
     }),
@@ -165,7 +173,7 @@ export const tvrouter = createTRPCRouter({
           Authorization: `Bearer ${apiKey}`,
         },
       });
-      const json = await response.json();
+      const json = (await response.json()) as TVShowResults;
       console.log(json);
       return json;
     }),
@@ -179,7 +187,7 @@ export const tvrouter = createTRPCRouter({
         Authorization: `Bearer ${apiKey}`,
       },
     });
-    const json = await response.json();
+    const json = (await response.json()) as TVShowGenresList;
     console.log(json);
     return json;
   }),
@@ -201,7 +209,7 @@ export const tvrouter = createTRPCRouter({
           Authorization: `Bearer ${apiKey}`,
         },
       });
-      const json = await response.json();
+      const json = (await response.json()) as TVShowResults;
 
       console.log(json);
       return json;
@@ -222,7 +230,7 @@ export const tvrouter = createTRPCRouter({
           Authorization: `Bearer ${apiKey}`,
         },
       });
-      const json = await response.json();
+      const json = (await response.json()) as TVShowAggregateCredits;
       console.log(json);
 
       return json;
@@ -244,7 +252,7 @@ export const tvrouter = createTRPCRouter({
           Authorization: `Bearer ${apiKey}`,
         },
       });
-      const json = await response.json();
+      const json = (await response.json()) as Season;
       return json;
     }),
 });

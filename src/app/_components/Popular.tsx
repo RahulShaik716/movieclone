@@ -6,6 +6,7 @@ import ScrollButton from "./ScrollButton";
 import ChevronLeft from "public/ChevronLeft";
 import ChevronRight from "public/ChevronRight";
 import HorizantalCard from "./MovieHCard";
+import type { MovieSchema } from "~/server/schema/movie.schema";
 
 export default function PopularMovies() {
   const popularScroll = useRef<HTMLDivElement>(null);
@@ -45,7 +46,7 @@ export default function PopularMovies() {
         className="search-bar flex w-full cursor-pointer flex-row gap-x-4 overflow-x-auto px-10"
         ref={popularScroll}
       >
-        {popularMovies.results.map((movie: any) => (
+        {popularMovies.results.map((movie: MovieSchema) => (
           <HorizantalCard movie={movie} key={movie.id} />
         ))}
         <ScrollButton onClick={scrollToStart} direction="left">

@@ -6,8 +6,9 @@ import ScrollButton from "~/app/_components/ScrollButton";
 import ChevronLeft from "public/ChevronLeft";
 import ChevronRight from "public/ChevronRight";
 import HorizantalTVCard from "./HorizantalTVCard";
+import type { TVShow, TVShowGenre } from "~/server/schema/TV.schema";
 
-export default function TVByGenre({ genre }) {
+export default function TVByGenre({ genre }: { genre: TVShowGenre }) {
   const { data: tvShows, isLoading: isLoadingMovies } =
     api.tvshows.getTVShowsByGenre.useQuery({
       genreId: genre.id.toString(),
@@ -44,7 +45,7 @@ export default function TVByGenre({ genre }) {
         className="search-bar flex w-full cursor-pointer flex-row gap-x-4 overflow-x-auto px-10"
         ref={scrollRef}
       >
-        {tvShows.results.map((tvShow: any) => (
+        {tvShows?.results.map((tvShow: TVShow) => (
           <HorizantalTVCard tvShow={tvShow} key={tvShow.id} /> // use the HorizantalCard component here
         ))}
         <ScrollButton onClick={scrollToStart} direction="left">

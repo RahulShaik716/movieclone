@@ -20,7 +20,7 @@ export default function MovieBanner({
     original_title: string;
     adult: boolean;
   };
-  activeMovieId: number;
+  activeMovieId: number | undefined;
 }) {
   const router = useRouter();
   return (

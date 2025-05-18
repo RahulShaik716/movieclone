@@ -7,6 +7,7 @@ import HorizantalTVCard from "./HorizantalTVCard";
 import ScrollButton from "../ScrollButton";
 import ChevronLeft from "public/ChevronLeft";
 import ChevronRight from "public/ChevronRight";
+import type { TVShow } from "~/server/schema/TV.schema";
 
 export default function AiringToday() {
   const airingTodayScroll = useRef<HTMLDivElement>(null);
@@ -46,7 +47,7 @@ export default function AiringToday() {
         className="search-bar flex w-full cursor-pointer flex-row gap-x-4 overflow-x-auto px-10"
         ref={airingTodayScroll}
       >
-        {airingTodayTvShows.results.map((tvShow: any) => (
+        {airingTodayTvShows?.results.map((tvShow: TVShow) => (
           <HorizantalTVCard tvShow={tvShow} key={tvShow.id} />
         ))}
         <ScrollButton onClick={scrollToStart} direction="left">

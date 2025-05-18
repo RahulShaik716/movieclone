@@ -1,5 +1,4 @@
 import { api } from "~/trpc/react";
-import HorizantalCard from "../MovieHCard";
 import { useRef } from "react";
 import { useRouter } from "next/navigation";
 import MovieSkeleton from "../MovieSkeleton";
@@ -7,6 +6,7 @@ import HorizantalTVCard from "./HorizantalTVCard";
 import ScrollButton from "../ScrollButton";
 import ChevronLeft from "public/ChevronLeft";
 import ChevronRight from "public/ChevronRight";
+import type { TVShow } from "~/server/schema/TV.schema";
 
 export default function TopRatedTVShows() {
   const topRatedScroll = useRef<HTMLDivElement>(null);
@@ -46,7 +46,7 @@ export default function TopRatedTVShows() {
         className="search-bar flex w-full cursor-pointer flex-row gap-x-4 overflow-x-auto px-10"
         ref={topRatedScroll}
       >
-        {topRatedTvShows.results.map((tvShow: any) => (
+        {topRatedTvShows?.results.map((tvShow: TVShow) => (
           <HorizantalTVCard tvShow={tvShow} key={tvShow.id} />
         ))}
         <ScrollButton onClick={scrollToStart} direction="left">
