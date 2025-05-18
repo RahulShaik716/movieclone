@@ -1,14 +1,16 @@
 "use client";
 import { notFound, useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 import TVDetails from "~/app/_components/TV/TVDetails";
+import type { TVShow } from "~/server/schema/TV.schema";
 
-export default function TVPage() {
+function TVContent() {
   const searchParams = useSearchParams();
   if (!searchParams.get("data")) return notFound();
 
-  let tv;
+  let tv: TVShow | null = null;
   try {
-    tv = JSON.parse(decodeURIComponent(searchParams.get("data")));
+    tv = JSON.parse(decodeURIComponent(searchParams.get("data")!)) as TVShow;
   } catch {
     return notFound();
   }
@@ -17,9 +19,15 @@ export default function TVPage() {
     return <p className="text-white">No Show ID provided.</p>;
   }
 
+  return <TVDetails tv={tv} />;
+}
+
+export default function TVPage() {
   return (
-    <div>
-      <TVDetails tv={tv} />
-    </div>
+    <Suspense
+      fallback={<div className="p-4 text-white">Loading TV show...</div>}
+    >
+      <TVContent />
+    </Suspense>
   );
 }

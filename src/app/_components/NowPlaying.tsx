@@ -1,5 +1,4 @@
-import Image from "next/image";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { api } from "~/trpc/react";
 import ScrollButton from "./ScrollButton";
 import ChevronLeft from "public/ChevronLeft";
@@ -13,7 +12,6 @@ export default function NowPlaying() {
   const searchParams = useSearchParams();
   const pageNo = searchParams.get("pageNo") ?? "1";
   const nowPlaying = useRef<HTMLDivElement>(null);
-  const router = useRouter();
   const scrollToEnd = () => {
     if (nowPlaying.current) {
       nowPlaying.current.scrollBy({ left: 500, behavior: "smooth" });

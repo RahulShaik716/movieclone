@@ -1,14 +1,17 @@
 "use client";
 import { notFound, useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 import MovieDetails from "../_components/details";
+import type { MovieSchema } from "~/server/schema/movie.schema";
 
-export default function MoviePage() {
+function MovieContent() {
   const searchParams = useSearchParams();
   if (!searchParams.get("data")) return notFound();
 
-  let movie;
+  let movie: MovieSchema | null = null;
   try {
-    movie = JSON.parse(decodeURIComponent(searchParams.get("data")));
+    const dataParam = searchParams.get("data");
+    movie = JSON.parse(decodeURIComponent(dataParam!)) as MovieSchema;
   } catch {
     return notFound();
   }
@@ -21,5 +24,13 @@ export default function MoviePage() {
     <div>
       <MovieDetails movie={movie} />
     </div>
+  );
+}
+
+export default function MoviePage() {
+  return (
+    <Suspense fallback={<div className="p-4 text-white">Loading movie...</div>}>
+      <MovieContent />
+    </Suspense>
   );
 }

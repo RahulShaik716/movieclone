@@ -33,7 +33,7 @@ export default function TrendingMovies() {
     }, 10000); // Change slide every 20 second
 
     return () => clearInterval(interval); // Cleanup interval on component unmount
-  }, [currentIndex, movies]);
+  }, [currentIndex, movies, handleNext]);
 
   if (isLoadingMovies) {
     return <div className="mb-10 h-80 p-4">Loading...</div>;

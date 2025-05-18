@@ -171,7 +171,7 @@ export const movieRouter = createTRPCRouter({
       const json = (await response.json()) as RecommendationMovies;
       return json;
     }),
-  getAllGenreIds: publicProcedure.query(async (input) => {
+  getAllGenreIds: publicProcedure.query(async () => {
     const apiKey = process.env.TMDB_API_KEY;
     const url = `https://api.themoviedb.org/3/genre/movie/list?api_key=${apiKey}&language=en-US`;
     const response = await fetch(url, {

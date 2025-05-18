@@ -1,7 +1,6 @@
-import Image from "next/image";
 import { useRef } from "react";
 import { api } from "~/trpc/react";
-import { useRouter } from "next/navigation";
+
 import ScrollButton from "./ScrollButton";
 import ChevronLeft from "public/ChevronLeft";
 import ChevronRight from "public/ChevronRight";
@@ -12,7 +11,7 @@ import type { MovieSchema } from "~/server/schema/movie.schema";
 export default function UpcomingMovies() {
   const pageNo = 1;
   const UpcomingScroll = useRef<HTMLDivElement>(null);
-  const router = useRouter();
+
   const { data: UpcomingMovies, isLoading: UpcomingMoviesLoading } =
     api.movie.getUpcomingMovies.useQuery({
       pageNo: pageNo.toString(),

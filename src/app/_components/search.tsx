@@ -43,7 +43,7 @@ export default function Search() {
 
       return () => clearTimeout(timer);
     }
-  }, [search]);
+  }, [search, searchMovie, searchTVShow]);
 
   return (
     <div className="relative flex items-center justify-center">

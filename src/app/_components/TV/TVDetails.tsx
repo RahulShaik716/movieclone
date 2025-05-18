@@ -1,14 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { api } from "~/trpc/react";
-import type { TVShowDetails } from "~/server/schema/TV.schema";
+import type { TVShow } from "~/server/schema/TV.schema";
 import type { MovieGenre } from "~/server/schema/movie.schema";
 import { useRouter } from "next/navigation";
 
-export default function TVDetails({ tv }: { tv: TVShowDetails }) {
-  const [imdb, setImdb_id] = useState("");
+export default function TVDetails({ tv }: { tv: TVShow }) {
   const [selectedSeason, setSelectedSeason] = useState(0);
-  const [selectedEpisode, setSelectedEpisode] = useState(0);
+
   const [currentPage, setCurrentPage] = useState(0);
   const castScroll = useRef<HTMLDivElement>(null);
   const router = useRouter();
@@ -35,7 +34,7 @@ export default function TVDetails({ tv }: { tv: TVShowDetails }) {
       series_id: tv.id.toString(),
     });
 
-  if (!tvDetails || castLoading || seasonLoading)
+  if (!tvDetails || castLoading || seasonLoading || tvDetailsLoading)
     return <div className="mb-10 h-80 p-4">Loading...</div>;
 
   // Calculate the total number of pages
@@ -253,10 +252,9 @@ export default function TVDetails({ tv }: { tv: TVShowDetails }) {
               alt={episode?.name}
               unoptimized
               onClick={() => {
-                setSelectedEpisode(episode.episode_number);
                 sessionStorage.setItem(
                   "watch_url",
-                  `https://vidsrc.to/embed/tv/${imdb}/${selectedSeason}/${episode.episode_number}`,
+                  `https://vidsrc.to/embed/tv/${tv.id}/${selectedSeason}/${episode.episode_number}`,
                 );
                 router.push(`/player`);
               }}

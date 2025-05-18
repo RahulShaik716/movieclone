@@ -10,6 +10,7 @@ export interface MovieSchema {
   original_language: string;
   original_title: string;
   adult: boolean;
+  poster_path: string | null;
 }
 export interface MovieSearchResults {
   page: number;

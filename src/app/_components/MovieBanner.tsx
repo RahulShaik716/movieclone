@@ -2,27 +2,17 @@
 import Image from "next/image";
 import Button from "./Button";
 import { useRouter } from "next/navigation";
+import type { MovieSchema } from "~/server/schema/movie.schema";
 
 export default function MovieBanner({
   movie,
   activeMovieId,
 }: {
-  movie: {
-    id: number;
-    title: string;
-    backdrop_path: string | null;
-    overview: string;
-    release_date: string;
-    vote_average: number;
-    vote_count: number;
-    popularity: number;
-    original_language: string;
-    original_title: string;
-    adult: boolean;
-  };
+  movie: MovieSchema;
   activeMovieId: number | undefined;
 }) {
   const router = useRouter();
+  console.log("activeMovieId", activeMovieId);
   return (
     <div className="relative h-full w-full overflow-hidden" key={movie.id}>
       <Image

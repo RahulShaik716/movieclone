@@ -11,14 +11,14 @@ import ChevronRight from "public/ChevronRight";
 
 import type {
   MovieCastMember,
-  MovieDetailsSchema,
   MovieGenre,
+  MovieSchema,
   ProductionCompany,
 } from "~/server/schema/movie.schema";
 
 import { useRouter } from "next/navigation";
 
-export default function MovieDetails({ movie }: { movie: MovieDetailsSchema }) {
+export default function MovieDetails({ movie }: { movie: MovieSchema }) {
   const [cast, setCast] = useState<MovieCastMember[]>([]);
   const castScroll = useRef<HTMLDivElement>(null);
   const router = useRouter();
@@ -41,7 +41,7 @@ export default function MovieDetails({ movie }: { movie: MovieDetailsSchema }) {
     getCast({ movieId: movie.id.toString() });
   }, [movie.id]);
 
-  if (!movieDetails) {
+  if (!movieDetails || movieDetailsLoading || castLoading) {
     return <div> No Movie Details Found </div>;
   }
   return (
@@ -83,7 +83,14 @@ export default function MovieDetails({ movie }: { movie: MovieDetailsSchema }) {
               >
                 Watch Now
               </Button>
-              <Button onClick={() => {}}> Watch Trailer </Button>
+              <Button
+                onClick={() => {
+                  console.log("watch trailer");
+                }}
+              >
+                {" "}
+                Watch Trailer{" "}
+              </Button>
             </div>
             <p className="mt-2 text-lg">Overview:</p>
             <p className="text-md font-sans font-light">{movie.overview}</p>
@@ -208,7 +215,6 @@ export default function MovieDetails({ movie }: { movie: MovieDetailsSchema }) {
         </div>
       </div>
       <SimilarMovies movieId={movie.id.toString()} />
-      {/* {play && <MoviePlayer imdb={movieDetails.imdb_id} setPlay={setPlay} />} */}
     </div>
   );
 }

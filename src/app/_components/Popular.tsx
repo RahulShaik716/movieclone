@@ -1,6 +1,5 @@
 import { api } from "~/trpc/react";
 import MovieSkeleton from "./MovieSkeleton";
-import { useRouter } from "next/navigation";
 import { useRef } from "react";
 import ScrollButton from "./ScrollButton";
 import ChevronLeft from "public/ChevronLeft";
@@ -14,7 +13,7 @@ export default function PopularMovies() {
     api.movie.getPopularMovies.useQuery({
       pageNo: "1",
     });
-  const router = useRouter();
+
   const scrollToEnd = () => {
     if (popularScroll.current) {
       popularScroll.current.scrollBy({ left: 500, behavior: "smooth" });
@@ -46,7 +45,7 @@ export default function PopularMovies() {
         className="search-bar flex w-full cursor-pointer flex-row gap-x-4 overflow-x-auto px-10"
         ref={popularScroll}
       >
-        {popularMovies.results.map((movie: MovieSchema) => (
+        {popularMovies?.results.map((movie: MovieSchema) => (
           <HorizantalCard movie={movie} key={movie.id} />
         ))}
         <ScrollButton onClick={scrollToStart} direction="left">

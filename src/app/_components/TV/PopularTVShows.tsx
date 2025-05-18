@@ -1,7 +1,7 @@
 import { api } from "~/trpc/react";
-import HorizantalCard from "../MovieHCard";
+
 import { useRef } from "react";
-import { useRouter } from "next/navigation";
+
 import MovieSkeleton from "../MovieSkeleton";
 import HorizantalTVCard from "./HorizantalTVCard";
 import ScrollButton from "../ScrollButton";
