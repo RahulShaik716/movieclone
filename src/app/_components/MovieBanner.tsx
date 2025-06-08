@@ -3,6 +3,7 @@ import Image from "next/image";
 import Button from "./Button";
 import { useRouter } from "next/navigation";
 import type { MovieSchema } from "~/server/schema/movie.schema";
+import { useSession } from "next-auth/react";
 
 export default function MovieBanner({
   movie,
@@ -13,6 +14,7 @@ export default function MovieBanner({
 }) {
   const router = useRouter();
   console.log("activeMovieId", activeMovieId);
+  const { data: session } = useSession();
   return (
     <div className="relative h-full w-full overflow-hidden" key={movie.id}>
       <Image
@@ -37,17 +39,19 @@ export default function MovieBanner({
             <div className="flex max-w-[66ch] flex-col gap-y-0.5">
               <p className="font-[Oswald] text-3xl font-bold">{movie.title}</p>
               <div className="mt-2 flex flex-row gap-x-2">
-                <Button
-                  onClick={() => {
-                    sessionStorage.setItem(
-                      "watch_url",
-                      `https://vidsrc.to/embed/movie/${movie.id}`,
-                    );
-                    router.push("/player");
-                  }}
-                >
-                  Watch Now
-                </Button>
+                {session?.user.email && (
+                  <Button
+                    onClick={() => {
+                      sessionStorage.setItem(
+                        "watch_url",
+                        `https://vidsrc.to/embed/movie/${movie.id}`,
+                      );
+                      router.push("/player");
+                    }}
+                  >
+                    Watch Now
+                  </Button>
+                )}
                 {/* <Button onClick={() => {}}> Watch Trailer </Button> */}
               </div>
               <p className="mt-2 text-lg">Overview:</p>

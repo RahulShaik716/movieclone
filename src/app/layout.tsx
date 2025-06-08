@@ -8,6 +8,8 @@ import Link from "next/link";
 
 import SearchIcon from "public/SearchIcon";
 import Search from "./_components/search";
+import { SessionProvider } from "next-auth/react";
+import LoginButton from "./_components/login/LoginButton";
 
 export const metadata: Metadata = {
   title: "MovieMars",
@@ -26,29 +28,32 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${geist.variable}`}>
       <body className="bg-black">
-        <TRPCReactProvider>
-          <header className="fixed z-20 w-full bg-black">
-            <div className="container mx-auto flex h-[8vh] flex-row items-center py-4">
-              <Link className="" href="/">
-                <div className="text-xl font-bold text-nowrap text-orange-500">
-                  Planet-ET
-                </div>
-              </Link>
+        <SessionProvider>
+          <TRPCReactProvider>
+            <header className="fixed z-20 w-full bg-black">
+              <div className="container mx-auto flex h-[8vh] flex-row items-center py-4">
+                <Link className="" href="/">
+                  <div className="text-xl font-bold text-nowrap text-orange-500">
+                    Planet-ET
+                  </div>
+                </Link>
 
-              <div className="flex w-full cursor-pointer flex-row items-center justify-end gap-x-4 text-orange-500">
-                <SearchIcon />
-                <Search />
-                <Link href={`/tvshows/1`}>
-                  <p>TV Shows</p>
-                </Link>
-                <Link href={`/`}>
-                  <p>Movies </p>
-                </Link>
+                <div className="flex w-full cursor-pointer flex-row items-center justify-end gap-x-4 text-orange-500">
+                  <SearchIcon />
+                  <Search />
+                  <Link href={`/tvshows/1`}>
+                    <p>TV Shows</p>
+                  </Link>
+                  <Link href={`/`}>
+                    <p>Movies </p>
+                  </Link>
+                  <LoginButton />
+                </div>
               </div>
-            </div>
-          </header>
-          <div className="pt-[8vh]">{children}</div>
-        </TRPCReactProvider>
+            </header>
+            <div className="pt-[8vh]">{children}</div>
+          </TRPCReactProvider>
+        </SessionProvider>
       </body>
     </html>
   );

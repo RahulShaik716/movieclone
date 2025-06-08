@@ -4,10 +4,11 @@ import { api } from "~/trpc/react";
 import type { TVShow } from "~/server/schema/TV.schema";
 import type { MovieGenre } from "~/server/schema/movie.schema";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 export default function TVDetails({ tv }: { tv: TVShow }) {
   const [selectedSeason, setSelectedSeason] = useState(0);
-
+  const { data: session } = useSession();
   const [currentPage, setCurrentPage] = useState(0);
   const castScroll = useRef<HTMLDivElement>(null);
   const router = useRouter();
@@ -252,11 +253,13 @@ export default function TVDetails({ tv }: { tv: TVShow }) {
               alt={episode?.name}
               unoptimized
               onClick={() => {
-                sessionStorage.setItem(
-                  "watch_url",
-                  `https://vidsrc.to/embed/tv/${tv.id}/${selectedSeason}/${episode.episode_number}`,
-                );
-                router.push(`/player`);
+                if (session?.user) {
+                  sessionStorage.setItem(
+                    "watch_url",
+                    `https://vidora.su/embed/tv/${tv.id}/${selectedSeason}/${episode.episode_number}`,
+                  );
+                  router.push(`/player`);
+                }
               }}
             />
             <div className="text-white">

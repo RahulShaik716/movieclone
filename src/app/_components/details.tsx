@@ -76,9 +76,10 @@ export default function MovieDetails({ movie }: { movie: MovieSchema }) {
                 onClick={() => {
                   sessionStorage.setItem(
                     "watch_url",
-                    `https://vidsrc.to/embed/movie/${movie.id}`,
+                    `https://vidora.su/embed/movie/${movie.id}`,
                   );
                   router.push("/player");
+                  console.log("watch now");
                 }}
               >
                 Watch Now
